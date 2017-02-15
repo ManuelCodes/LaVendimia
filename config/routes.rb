@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  resources :clientes
+  get 'main_page/index'
+
   #devise_for :users, controllers: {
   #	sessions: "users/sessions#new",
   #    sessions: 'users/sessions',
@@ -16,4 +19,6 @@ Rails.application.routes.draw do
 #end
 devise_for :users
 #root to:  '/users/sign_in', to: 'devise/sessions#new'
+#root :to => "devise/sessions#new"
+root :to => redirect("/users/sign_in")
 end

@@ -3,23 +3,51 @@
   <head>
     <title>Vendemia</title>
     <%= csrf_meta_tags %>
-
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
   </head>
-
   <body>
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <ul class="nav navbar-nav">
+          <% if user_signed_in? %>
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Inicio<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Ventas</a></li>
+              <li class="divider"></li>
+              <li>
+                <%#<a href="#">Clientes</a> #%>
+                <%= link_to "Clientes", new_cliente_path %>
+              </li>
+              <li><a href="#">Articulos</a></li>
+              <li><a href="#">Configuración</a></li>
+            </ul>
+          </li>
+          <% end %>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <% if user_signed_in? %>
+            <li><a href="#"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+            <li id = "date">
+              <a href="#"> <%=  Time.now.strftime("%d/%m/%Y")   %></a>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </nav>
     <div class="container">
       <% flash.each do |key, value| %>
-        <div class="alert alert-<%= key %>">
+        <% if key == "alert" %>
+          <div class="alert alert-danger">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <%= value %>
+          </div>
+        <% else %>
           <%= value %>
-        </div>
+        <% end %>
       <% end %>
     </div>
-    <%= yield :top_content %>
-    <div class="container">
-      <h1><%= yield :header %></h1>
-      <%= yield %>
-    </div>
+    <%= yield %>
   </body>
 </html>

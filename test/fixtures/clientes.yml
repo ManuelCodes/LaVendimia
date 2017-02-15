@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  nom_cliente: MyString
+  ap_paterno: MyString
+  ap_materno: MyString
+  rfc: MyString
+
+two:
+  nom_cliente: MyString
+  ap_paterno: MyString
+  ap_materno: MyString
+  rfc: MyString

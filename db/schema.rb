@@ -10,7 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170210174227) do
+ActiveRecord::Schema.define(version: 20170215052754) do
+
+  create_table "clientes", force: :cascade do |t|
+    t.string   "nom_cliente", limit: 50
+    t.string   "ap_paterno",  limit: 50
+    t.string   "ap_materno",  limit: 50
+    t.string   "rfc",         limit: 13
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
 
   create_table "users", force: :cascade do |t|
     t.string   "email",                  default: "", null: false

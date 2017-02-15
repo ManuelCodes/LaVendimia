@@ -2,15 +2,17 @@ class Users::SessionsController < Devise::SessionsController
 # before_action :configure_sign_in_params, only: [:create]
 
   #GET /resource/sign_in
-  #def new
-  #  return
-    #super
-  #end
+  def new
+    #redirect_to main_page_index_path, :notice => 'if you want to add a notice'
+    #notice[:success] = ["Welcome to the Sample App!"]
+    #flash = { success: "It worked!", error: "It failed." }
+    super
+  end
 
   # POST /resource/sign_in
-  #def create
-  #   super
-  #end
+  def create
+     super
+  end
 
   # DELETE /resource/sign_out
   # def destroy
@@ -18,7 +20,7 @@ class Users::SessionsController < Devise::SessionsController
   # end
 
   # protected
-
+  
   # If you have extra params to permit, append them to the sanitizer.
   # def configure_sign_in_params
   #   devise_parameter_sanitizer.permit(:sign_in, keys: [:attribute])
