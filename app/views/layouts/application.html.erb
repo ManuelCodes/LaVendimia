@@ -5,6 +5,18 @@
     <%= csrf_meta_tags %>
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <style type="text/css">
+      .td_text_right
+      {
+        text-align:right;
+        font-weight:bold;
+      }
+      .borderless td, .borderless th
+      {
+        border: none;
+        border-top: none !important;
+      }
+    </style>
   </head>
   <body>
     <nav class="navbar navbar-inverse">
