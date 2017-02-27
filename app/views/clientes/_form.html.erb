@@ -1,43 +1,49 @@
+
 <%= form_for(cliente, html: {class: ""}) do |f| %>
   <% if cliente.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(cliente.errors.count, "error") %> prohibited this cliente from being saved:</h2>
-
-      <ul>
-      <% cliente.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
-    </div>
+    <% cliente.errors.each do |attr,message| %>
+      <div class="alert alert-danger alert-dismissable">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <%= message %>
+      </div>
+    <% end %>
   <% end %>
-  <table class = "table borderless">
-    <tr>
-      <td class="text-success td_text_right" style="padding-top:4%;">Nombre:</td>
-      <td style="text-align:left">
-        <%= f.text_field :nom_cliente, :class => 'form-control' %>
-      </td>
-    </tr>
-    <tr>
-      <td class="text-success td_text_right" style="padding-top:4%;">Apellido Paterno:</td>
-      <td style="text-align:left">
-        <%= f.text_field :ap_paterno, :class => 'form-control' %>
-      </td>
-    </tr>
-    <tr>
-      <td class="text-success td_text_right" style="padding-top:4%;">Apellido Materno:</td>
-      <td style="text-align:left">
-        <%= f.text_field :ap_materno, :class => 'form-control' %>
-      </td>
-    </tr>
-    <tr>
-      <td class = "text-success td_text_right" style="padding-top:4%;">RFC:</td>
-      <td style="text-align:left">
-        <%= f.text_field :rfc, :class => 'form-control' %>
-      </td>
-    </tr>
-  </table>
-
-  <div class="actions">
-    <%= f.submit %>
+  <div class="panel panel-primary" style="max-width:80%;margin-left:auto; margin-right:auto;">
+    <div class="panel-heading">Registro de Clientes</div>
+    <div align = "right" class = "text-success" style="font-weight:bold;padding-right:10%">
+      Clave: <%= @clave %>
+    </div>
+    <div class = "table-responsive" align = "left">
+      <table class = "table borderless" style="width:80%" >
+        <tr>
+          <td class="text-success td_text_right" style="padding-top:2%;">Nombre:</td>
+          <td style="text-align:left">
+            <%= f.text_field :nom_cliente, :class => 'form-control', :style => "width:200px" %>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-success td_text_right" style="padding-top:2%;">Apellido Paterno:</td>
+          <td style="text-align:left">
+            <%= f.text_field :ap_paterno, :class => 'form-control', :style => "width:200px" %>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-success td_text_right" style="padding-top:2%;">Apellido Materno:</td>
+          <td style="text-align:left">
+            <%= f.text_field :ap_materno, :class => 'form-control', :style => "width:200px" %>
+          </td>
+        </tr>
+        <tr>
+          <td class = "text-success td_text_right" style="padding-top:2%;">RFC:</td>
+          <td style="text-align:left">
+            <%= f.text_field :rfc, :class => 'form-control', :style => "width:150px" %>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div align = "right" style="max-width:80%;margin-left:auto; margin-right:auto;">
+    <%= button_tag "Cancelar", :type => 'button', :class => "btn btn-success", :onclick => "location.href = '#{clientes_path()}'" %>
+    <%= f.submit :class => "btn btn-success", :value => @button_lavel %>
   </div>
 <% end %>

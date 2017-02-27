@@ -1,6 +1,6 @@
 class ClientesController < ApplicationController
   before_action :set_cliente, only: [:show, :edit, :update, :destroy]
-
+  helper_method :clave_format
   # GET /clientes
   # GET /clientes.json
   def index
@@ -14,16 +14,22 @@ class ClientesController < ApplicationController
 
   # GET /clientes/new
   def new
+    @clave = clave_format(Cliente.maximum(:id).to_i.next)
+    @button_lavel = "Guardar"
     @cliente = Cliente.new
   end
 
   # GET /clientes/1/edit
   def edit
+    @button_lavel = "Editar"
+    @clave = clave_format(params[:id])
   end
 
   # POST /clientes
   # POST /clientes.json
   def create
+    @button_lavel = "Guardar"
+    @clave = clave_format(Cliente.maximum(:id).to_i.next)
     @cliente = Cliente.new(cliente_params)
 
     respond_to do |format|
@@ -59,6 +65,27 @@ class ClientesController < ApplicationController
       format.html { redirect_to clientes_url, notice: 'Cliente was successfully destroyed.' }
       format.json { head :no_content }
     end
+  end
+
+  def clave_agergar
+    clave_format(Cliente.maximum(:id).to_i.next)
+  end
+
+  def clave_editar
+
+  end
+
+  def clave_format(id)
+    if id.to_s.length == 1
+      return "000#{id}"
+    end
+    if idto_s.length == 2
+      return "00#{id}"
+    end
+    if idto_s.length == 2
+      return "0#{id}"
+    end
+    id
   end
 
   private
