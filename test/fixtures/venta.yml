@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  cliente_id: 1
+  enganche: 9.99
+  importe: 9.99
+  total: 9.99
+  bonificacion: 9.99
+
+two:
+  cliente_id: 1
+  enganche: 9.99
+  importe: 9.99
+  total: 9.99
+  bonificacion: 9.99

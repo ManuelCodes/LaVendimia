@@ -4,17 +4,39 @@ class ClientesController < ApplicationController
   # GET /clientes
   # GET /clientes.json
   def index
-    #@clientes = Cliente.all
+    @clientes = Cliente.all
     @clientes = Cliente.paginate(:page => params[:page])
+#    respond_to do |format|
+ #     format.html
+  #    format.json do
+   #     @cliente = Cliente.where("nom_cliente LIKE ? ", "%#{params[:nom_cliente]}%"
+    #    render json: { cliente: @cliente }
+     # end
+    #end
+    if params[:term].present?
+      @clientes = @clientes.where("nom_cliente LIKE ? ", "%#{params[:term]}%")
+    else
+      @clientes = @clientes.paginate(page: params[:page])
+    end
+
+    respond_to do |format|
+      format.html
+      format.json
+    end
+
   end
 
   # GET /clientes/1
   # GET /clientes/1.json
   def show
+    @disabled = true
+    @clave = clave_format(params[:id])
+    #Cliente.where("nom_cliente LIKE ? ", "%Ise%"  ); 
   end
 
   # GET /clientes/new
   def new
+    @disabled = false
     @clave = clave_format(Cliente.maximum(:id).to_i.next)
     @button_lavel = "Guardar"
     @cliente = Cliente.new
@@ -22,6 +44,7 @@ class ClientesController < ApplicationController
 
   # GET /clientes/1/edit
   def edit
+    @disabled = false
     @button_lavel = "Editar"
     @clave = clave_format(params[:id])
   end
@@ -35,7 +58,7 @@ class ClientesController < ApplicationController
 
     respond_to do |format|
       if @cliente.save
-        format.html { redirect_to @cliente, notice: 'Cliente was successfully created.' }
+        format.html { redirect_to clientes_path, notice: 'Bien Hecho. El cliente ha sido registrado correctamente' }
         format.json { render :show, status: :created, location: @cliente }
       else
         format.html { render :new }
@@ -49,7 +72,7 @@ class ClientesController < ApplicationController
   def update
     respond_to do |format|
       if @cliente.update(cliente_params)
-        format.html { redirect_to @cliente, notice: 'Cliente was successfully updated.' }
+        format.html { redirect_to clientes_path, notice: 'Se actualizó el cliente correctamete.' }
         format.json { render :show, status: :ok, location: @cliente }
       else
         format.html { render :edit }
@@ -63,7 +86,7 @@ class ClientesController < ApplicationController
   def destroy
     @cliente.destroy
     respond_to do |format|
-      format.html { redirect_to clientes_url, notice: 'Cliente was successfully destroyed.' }
+      format.html { redirect_to clientes_path, notice: 'Se eliminó el cliente correctamente.' }
       format.json { head :no_content }
     end
   end
@@ -72,22 +95,7 @@ class ClientesController < ApplicationController
     clave_format(Cliente.maximum(:id).to_i.next)
   end
 
-  def clave_editar
-
-  end
-
-  def clave_format(id)
-    if id.to_s.length == 1
-      return "000#{id}"
-    end
-    if idto_s.length == 2
-      return "00#{id}"
-    end
-    if idto_s.length == 2
-      return "0#{id}"
-    end
-    id
-  end
+  
 
   private
     # Use callbacks to share common setup or constraints between actions.

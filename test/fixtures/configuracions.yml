@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  tasa: 9.99
+  prc_enganche: 9.99
+  plazo_maximo: 1
+
+two:
+  tasa: 9.99
+  prc_enganche: 9.99
+  plazo_maximo: 1

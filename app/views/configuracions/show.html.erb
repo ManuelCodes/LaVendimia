@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Tasa:</strong>
+  <%= @configuracion.tasa %>
+</p>
+
+<p>
+  <strong>Prc enganche:</strong>
+  <%= @configuracion.prc_enganche %>
+</p>
+
+<p>
+  <strong>Plazo maximo:</strong>
+  <%= @configuracion.plazo_maximo %>
+</p>
+
+<%= link_to 'Edit', edit_configuracion_path(@configuracion) %> |
+<%= link_to 'Back', configuracions_path %>

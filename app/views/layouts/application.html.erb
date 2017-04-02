@@ -32,8 +32,16 @@
                 <li>
                   <%= link_to "Clientes", clientes_path %>
                 </li>
-                <li><a href="#">Articulos</a></li>
-                <li><a href="#">Configuración</a></li>
+                <li>
+                  <%= link_to "Articulos", articulos_path %>
+                </li>
+                <li>
+                    <% if isConfigurated? %>
+                      <%= link_to "Configuración", '/configuracions/1/edit' %>
+                    <% else %>
+                      <%= link_to "Configuración", new_configuracion_path %>
+                    <% end %>
+                </li>
               </ul>
             </li>
           <% end %>
@@ -56,10 +64,44 @@
             <%= value %>
           </div>
         <% else %>
-          <%= value %>
+          <% if key == "notice" %>
+            <div class="alert alert-success">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+              <%= value %>
+            </div>
+          <% else %>
+            <%= key %>
+            <%= value %>
+          <%end %>
         <% end %>
       <% end %>
     </div>
     <%= yield %>
   </body>
+  <script type="text/javascript">
+    function onlyNumbers(evt) //Función que permite solo números
+    { 
+      var charCode = (evt.which) ? evt.which : evt.keyCode
+      if( charCode == 16 )
+        return false;
+      if (charCode == 9 || charCode == 8 || charCode == 46 || (charCode >= 48 && charCode < 58) || (charCode >= 37 && charCode <= 40) || (charCode >= 96 && charCode <= 105))//0-9
+         return true;
+      return false;
+    }
+    function soloNumerico(input)
+    {         //input es el objeto que recibe
+      var value = input.value;          //le asignamos el valor del objeto a la variable value
+      if (isNumeric(value))           //validamos si el valor es numerico
+        return value;             //retornamos si se cumple la condicion anteiros
+      else                    //si no
+        input.value = '';           //vaciamos el input
+    }
+    function isNumeric(n)
+    {
+      if(n.indexOf(',',-1) > -1) 
+        return false;
+      else
+        return $.isNumeric(n);
+    }
+  </script>
 </html>

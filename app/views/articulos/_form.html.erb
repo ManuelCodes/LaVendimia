@@ -1,0 +1,74 @@
+<%= form_for(articulo) do |f| %>
+
+  <% if articulo.errors.any? %>
+    <% articulo.errors.each do |attr,message| %>
+      <div class="alert alert-danger alert-dismissable">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <%= message %>
+      </div>
+    <% end %>
+  <% end %>
+
+  <div class="panel panel-primary" style="max-width:80%;margin-left:auto; margin-right:auto;">
+    <div class="panel-heading">Registro de Articulos</div>
+    <div align = "right" class = "text-success" style="font-weight:bold;padding-right:10%">
+      Clave: <%= @clave %>
+    </div>
+    <div class = "table-responsive" align = "left">
+      <table class = "table borderless" style="width:80%" >
+        <tr>
+          <td class="text-success td_text_right" style="padding-top:2%;">Descripción:</td>
+          <td style="text-align:left">
+            <%= f.text_field :descripcion, :class => 'form-control', :style => "width:200px", :disabled => @disabled %>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-success td_text_right" style="padding-top:2%;">Modelo:</td>
+          <td style="text-align:left">
+            <%= f.text_field :modelo, :class => 'form-control', :style => "width:200px", :disabled => @disabled %>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-success td_text_right" style="padding-top:2%;">Precio:</td>
+          <td style="text-align:left">
+            <%= f.text_field :precio, :class => 'form-control', :style => "width:150px", :disabled => @disabled, :onblur => "return soloNumerico(this)" %>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-success td_text_right" style="padding-top:2%;">Existencia:</td>
+          <td style="text-align:left">
+            <%= f.text_field :existencia, :class => 'form-control', :style => "width:100px", :disabled => @disabled, :onKeyDown => "return onlyNumbers(event)", :onblur => "return soloNumerico(this)" %>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div align = "right" style="max-width:80%;margin-left:auto; margin-right:auto;">
+    <%= button_tag "Cancelar", :type => 'button', :class => "btn btn-success", :onclick => "regresar('#{articulos_path()}',!#{@disabled})" %>
+    <% if !@disabled %>
+      <%= f.submit :class => "btn btn-success", :value => @button_lavel, :onclick => "return validarCampos()" %>
+    <% end %>
+  </div>
+<% end %>
+<script type="text/javascript">
+  function regresar(ubicacion, consulta)
+  {
+    if(consulta)
+    {
+      if(confirm('¿Desea salir de la pantalla actual?'))
+        window.location = ubicacion;
+    }
+    else
+      window.location = ubicacion;
+  }
+  function validarCampos()
+  {
+    if( !$.isNumeric( $('#articulo_precio').val() ) )
+    {
+      alert('El precio tiene que ser númerico.');
+      return false;
+    }
+    $('#articulo_precio').val( parseFloat ( $('#articulo_precio').val() ) );
+    return true;
+  }
+</script>

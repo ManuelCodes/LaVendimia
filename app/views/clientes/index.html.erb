@@ -1,9 +1,8 @@
-<p id="notice"><%= notice %></p>
 <div align = "right" style="padding:1%">
   <%= link_to 'Nuevo cliente', new_cliente_path %>
 </div>
 <p class="text-primary">Clientes registrados</p>
-<table id="example" class="table table-striped table-bordered" cellspacing="0" width="100%">
+<table id="example" class="table table-striped table-bordered" cellspacing="0" >
   <thead>
     <tr>
       <th>Clave cliente</th>
@@ -18,7 +17,7 @@
         <td><%= cliente.nom_cliente %> <%= cliente.ap_paterno %> <%= cliente.ap_materno %></td>
         <td><%= link_to 'Consultar', cliente %></td>
         <td><%= link_to 'Editar', edit_cliente_path(cliente) %></td>
-        <td><%= link_to 'Eliminar', cliente, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Eliminar', cliente, method: :delete, data: { confirm: '¿Estás seguro?' } %></td>
       </tr>
     <% end %>
   </tbody>

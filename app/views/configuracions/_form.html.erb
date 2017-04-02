@@ -1,0 +1,38 @@
+<%= form_for(configuracion) do |f| %>
+  <% if configuracion.errors.any? %>
+    <% configuracion.errors.each do |attr,message| %>
+      <div class="alert alert-danger alert-dismissable">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <%= message %>
+      </div>
+    <% end %>
+  <% end %>
+  <div class="panel panel-primary" style="max-width:80%;margin-left:auto; margin-right:auto;">
+    <div class="panel-heading">Configuración</div>
+    <div class = "table-responsive" align = "left">
+      <table class = "table borderless" style="width:80%" >
+        <tr>
+          <td class="text-success td_text_right" style="padding-top:2%;">Tasa financiamiento:</td>
+          <td style="text-align:left">
+            <%= f.text_field :tasa, :class => 'form-control', :style => "width:100px" %>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-success td_text_right" style="padding-top:2%;">% Enganche:</td>
+          <td style="text-align:left">
+            <%= f.text_field :prc_enganche, :class => 'form-control', :style => "width:100px" %>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-success td_text_right" style="padding-top:2%;">Plazo máximo:</td>
+          <td style="text-align:left">
+            <%= f.text_field :plazo_maximo, :class => 'form-control', :style => "width:100px" %>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div align = "right" style="max-width:80%;margin-left:auto; margin-right:auto;">
+    <%= f.submit :class => "btn btn-success", :value => "Guardar" %>
+  </div>
+<% end %>
