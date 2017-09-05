@@ -4,7 +4,18 @@ class ArticulosController < ApplicationController
   # GET /articulos
   # GET /articulos.json
   def index
+    @articulos = Articulo.all
     @articulos = Articulo.paginate(:page => params[:page])
+    if params[:term].present?
+      @articulos = @articulos.where("descripcion LIKE ? ", "%#{params[:term]}%")
+    else
+      @articulos = @articulos.paginate(page: params[:page])
+    end
+
+    respond_to do |format|
+      format.html
+      format.json { render :json => @articulos }
+    end
   end
 
   # GET /articulos/1

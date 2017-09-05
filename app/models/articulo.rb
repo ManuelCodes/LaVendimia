@@ -5,5 +5,5 @@ class Articulo < ApplicationRecord
 	validates_presence_of :existencia, :message => "No se puede continuar la existencia es requerida"
 	validates_numericality_of :precio, on: :create, :greater_than => 0.99, :message => "El precio tiene que ser mayor o igual a uno"
 	validates_numericality_of :precio, on: :update, :greater_than => 0.99, :message => "El precio tiene que ser mayor o igual a uno"
-	belongs_to :RelVentaArticulo
+	has_many :RelVentaArticulo
 end

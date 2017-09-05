@@ -15,13 +15,40 @@
 		<div align = "right" class = "text-success" style="font-weight:bold;padding-right:10%">
 	      Clave: <%= @clave %>
 	    </div>
-	    <button type="button" class="btn btn-primary" >Cliente</button>
-	    <div. class="ui-widget">
-	    	<label for="nom_cliente_">Birds: </label>
-	    	<%= text_field "nom_cliente", nil,  :class => 'form-control', :style => "width:200px", :placeholder => "Buscar cliente", :id => "nom_cliente" %>
-	    </div>
-	    <hr class = "blueline"> 
-	    <div class = "table-responsive" align = "left">
+	    <table>
+	    	<tr>
+	    		<td >
+	    			<div style="font-size: 19px">
+				    	<span class="label label-primary">Cliente</span>
+				    </div>
+	    		</td>
+	    		<td >
+	    			<%= text_field "nom_cliente", nil,  :class => 'form-control', :style => "width:200px", :placeholder => "Buscar cliente", :id => "nom_cliente" %>
+	    			
+	    			<%= hidden_field("id_cliente", nil, :id => "nom_cliente" ) %>
+	    		</td>
+	    		<td >
+	    			<label style="color:#6E6E6E" id="label_RFC"></label>
+	    		</td>
+	    	</tr>
+	    </table>
+	    <hr class = "blueline">
+	    <table>
+	    	<tr>
+	    		<td >
+	    			<div style="font-size: 19px">
+				    	<span class="label label-primary">Descripción</span>
+				    </div>
+	    		</td>
+	    		<td>
+	    			<%= text_field "descripcion", nil,  :class => 'form-control', :style => "width:200px", :placeholder => "Buscar descripción", :id => "descripcion" %>
+	    		</td>
+	    		<td id = "celdaVenta">
+        			<span class="glyphicon glyphicon-plus-sign" style = "font-size:24px;cursor:pointer" onclick = "mostrarDatosArticulo()"></span>
+	    		</td>
+	    	</tr>
+	    </table>
+	    <div class = "table-responsive" align = "left" id = "articulos_a_vender">
 	    </div>
 	</div>
 	<% if false %>
@@ -31,23 +58,21 @@
 <script type="text/javascript">
 	$(function()
 	{
-	    $( "#nom_cliente" ).autocomplete(
-	    {
+	    $( "#nom_cliente" ).autocomplete
+	    ({
 	    	source: function( request, response )
 	    	{
 	    		$.ajax( {
 	    			url: "../clientes.json",
 	    			dataType: "json",
+	    			type: "get",
 	    			data: {
 	           			term: request.term
 	          		},
 	          		success: function( data )
 	          		{
-	          			window.data = data;
-	          			console.log(data)
-	          			var a = new Array();
-	          			a.push( {label: "yolo"} );
-	            		response( a );
+	          			setClientes(data);
+	            		response( autoCompletedClientsArray(data) );
 	          		},
 	          		error: function()
 	          		{
@@ -56,11 +81,150 @@
 	        	});
 	    	},
 	      	minLength: 2,
-	     	 select: function( event, ui )
-	     	 {
-	     	 	console.log(ui)
-	    	    log( "Selected: " + ui.item.value + " aka " + ui.item.id );
-	    	 }
+	      	select: function( event, ui )
+	      	{
+	      		var id = ui.item.label.split('-');
+	      		id = id[0];
+	      		id = parseInt(id);
+	      		var rfc = _.findWhere(getClientes(),{id: id}).rfc
+	      		$('#label_RFC').text('RFC: ' + rfc);
+
+	      	}
 	   	});
-	})
+
+	   	$('#descripcion').autocomplete
+	   	({
+	   		source: function( request, response )
+	    	{
+	    		$.ajax( {
+	    			url: "../articulos.json",
+	    			dataType: "json",
+	    			type: "get",
+	    			data: {
+	           			term: request.term
+	          		},
+	          		success: function( data )
+	          		{
+	          			window.data = data;
+	          			setArticulos(data);
+	          			response(autoCompletedDescriptionArray(data));
+	          		},
+	          		error: function()
+	          		{
+	          			alert('error');
+	          		}
+	        	});
+	    	},
+	      	minLength: 2,
+	      	select: function( event, ui )
+	      	{
+	      		var articulo   = _.findWhere(getArticulos(), { descripcion: ui.item.label } );
+	      		setArticulo(articulo);
+	   			if( articulo.existencia == 0)
+	   			{
+	   				alert("El artículo seleccionado no cuenta con existencia, favor de verificar");
+	   				return false;
+	   			}
+	   			else
+	   				alert('todo bien porcedo a realizar de venta');
+	   			if(!$('#nom_cliente').val())
+	   			{
+	   				alert("No ha seleccionado un cliente");
+	   				$('#nom_cliente').focus();
+	   			}
+	   			else
+	   			{
+
+	   			}
+	      	}
+	   	});
+	});
+	function clave_cliente(id)
+	{
+		if( id.toString().length == 1 )
+			return '00'+ id;
+		if( id.toString().length == 2 )
+			return '0' + id;
+		return id;
+	}
+	function autoCompletedClientsArray(responsedArray)
+	{
+		var autoCompletedArray = new Array();
+		responsedArray.forEach(function(currentValue, index, array)
+		{
+			//console.log(currentValue);
+			var label = clave_cliente(currentValue.id) + " - " + currentValue.nom_cliente + " " + currentValue.ap_paterno + " " + currentValue.ap_materno;
+			autoCompletedArray.push( label );
+		});
+		return autoCompletedArray;
+	}
+
+	function autoCompletedDescriptionArray(responsedArray)
+	{
+		var autoCompletedArray = new Array();
+		responsedArray.forEach(function(currentValue, index, array)
+		{
+			autoCompletedArray.push(currentValue.descripcion);
+		});
+		return autoCompletedArray;
+	}
+	function mostrarDatosArticulo()
+	{
+		if( typeof getArticulo() != 'undefined' &&  getArticulo().existencia > 0 && $('#nom_cliente').val() != ""  && getClientes().length > 0)
+		{
+			$.get('<%= preventa_path %>?id_articulo='+articulo.id, function(data)
+			{
+				console.log(data);
+				$('#articulos_a_vender').html(data);
+				//obtenemos el div y le sacamos la tabla
+				var contenedor = document.getElementById('articulos_a_vender');
+				var tabla      = contenedor.children[0];
+				console.log(tabla);
+				var row        = tabla.rows[1];
+				var cell       = row.cells[3];
+				var precio     = parseFloat(cell.innerText);
+				row.cells[4].innerText = precio;
+				alert(precio);
+
+			}).error(function()
+			{
+				alert('error');
+			});
+		}
+		else
+			alert('No ha seleccionado un articulo en existencia');
+	}
+	function hayArticulos()
+	{
+		//regresa true cuando se han agregado articulos para vender
+		//caso contrario retorna false
+		return !!$('#articulos_a_vender').html();
+	}
+	var clientes = new Array();
+	function getClientes()
+	{
+		return clientes;
+	}
+	function setClientes(clientes)
+	{
+		this.clientes = clientes;
+	}
+	var articulos = new Array();
+	function getArticulos()
+	{
+		return articulos;
+	}
+	function setArticulos(articulos)
+	{
+		this.articulos = articulos;
+	}
+	var articulo;
+	function setArticulo(articulo)
+	{
+		this.articulo = articulo;
+	}
+	function getArticulo()
+	{
+		return articulo;
+	}
 </script>

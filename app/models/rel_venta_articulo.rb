@@ -1,4 +1,4 @@
 class RelVentaArticulo < ApplicationRecord
 	belongs_to :venta
-	has_many :articulos
+	belongs_to :articulos
 end

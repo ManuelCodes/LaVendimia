@@ -4,6 +4,10 @@ Rails.application.routes.draw do
   resources :clientes
   get '/main_page/index'
   get 'ventas/new', to: 'ventas#new'
+  #id del articulo
+  #match '/:book_name/page/:id' => "page#show", :as => :page
+  match 'ventas/preventa' => 'ventas#preventa', as: 'preventa' , via: [:get] 
+  #get 'ventas/preventa/:id', to: 'ventas#preventa', as: 'preventa'
   post 'ventas',    to: 'ventas#create'
   #get '/configuracions/:id/edit', to: 'configuracion#edit', as: :configuracion
   #post '/configuracions/:id', to: 'configuracion#create', as: :configuracions

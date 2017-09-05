@@ -5,6 +5,7 @@
     <%= csrf_meta_tags %>
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag('underscore-1-8-3.js') %>
     <style type="text/css">
       .td_text_right
       {
@@ -17,6 +18,12 @@
         border: none;
         border-top: none !important;
       }
+      .input_text_rounded_corner
+      {
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+      }
     </style>
   </head>
   <body>
@@ -27,7 +34,9 @@
             <li class="dropdown">
               <a class="dropdown-toggle" data-toggle="dropdown" href="#">Inicio<span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li><a href="#">Ventas</a></li>
+                <li>
+                  <%= link_to "Ventas", ventas_new_path %>
+                </li>
                 <li class="divider"></li>
                 <li>
                   <%= link_to "Clientes", clientes_path %>

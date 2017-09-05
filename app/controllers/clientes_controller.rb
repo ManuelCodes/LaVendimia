@@ -6,13 +6,6 @@ class ClientesController < ApplicationController
   def index
     @clientes = Cliente.all
     @clientes = Cliente.paginate(:page => params[:page])
-#    respond_to do |format|
- #     format.html
-  #    format.json do
-   #     @cliente = Cliente.where("nom_cliente LIKE ? ", "%#{params[:nom_cliente]}%"
-    #    render json: { cliente: @cliente }
-     # end
-    #end
     if params[:term].present?
       @clientes = @clientes.where("nom_cliente LIKE ? ", "%#{params[:term]}%")
     else
@@ -21,9 +14,8 @@ class ClientesController < ApplicationController
 
     respond_to do |format|
       format.html
-      format.json
+      format.json { render :json => @clientes }
     end
-
   end
 
   # GET /clientes/1
