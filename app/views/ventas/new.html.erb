@@ -13,7 +13,7 @@
 	<div class="panel panel-primary" style="max-width:80%;margin-left:auto; margin-right:auto;">
 		<div class="panel-heading">Registro de Clientes</div>
 		<div align = "right" class = "text-success" style="font-weight:bold;padding-right:10%">
-	      Clave: <%= @clave %>
+			Clave: <%= @clave %>
 	    </div>
 	    <table>
 	    	<tr>
@@ -48,8 +48,7 @@
 	    		</td>
 	    	</tr>
 	    </table>
-	    <div class = "table-responsive" align = "left" id = "articulos_a_vender">
-	    </div>
+	    <div class = "table-responsive" align = "left" id = "articulos_a_vender"></div>
 	</div>
 	<% if false %>
 		<%= button_tag  "Cancelar", :type => 'submit' %>
@@ -83,9 +82,9 @@
 	      	minLength: 2,
 	      	select: function( event, ui )
 	      	{
-	      		var id = ui.item.label.split('-');
-	      		id = id[0];
-	      		id = parseInt(id);
+	      		var id  = ui.item.label.split('-');
+	      		id      = id[0];
+	      		id      = parseInt(id);
 	      		var rfc = _.findWhere(getClientes(),{id: id}).rfc
 	      		$('#label_RFC').text('RFC: ' + rfc);
 
@@ -125,16 +124,10 @@
 	   				alert("El artículo seleccionado no cuenta con existencia, favor de verificar");
 	   				return false;
 	   			}
-	   			else
-	   				alert('todo bien porcedo a realizar de venta');
 	   			if(!$('#nom_cliente').val())
 	   			{
 	   				alert("No ha seleccionado un cliente");
 	   				$('#nom_cliente').focus();
-	   			}
-	   			else
-	   			{
-
 	   			}
 	      	}
 	   	});
@@ -168,37 +161,120 @@
 		});
 		return autoCompletedArray;
 	}
+
 	function mostrarDatosArticulo()
 	{
 		if( typeof getArticulo() != 'undefined' &&  getArticulo().existencia > 0 && $('#nom_cliente').val() != ""  && getClientes().length > 0)
 		{
-			$.get('<%= preventa_path %>?id_articulo='+articulo.id, function(data)
+			if( hayArticulos() )
 			{
-				console.log(data);
-				$('#articulos_a_vender').html(data);
-				//obtenemos el div y le sacamos la tabla
-				var contenedor = document.getElementById('articulos_a_vender');
-				var tabla      = contenedor.children[0];
-				console.log(tabla);
-				var row        = tabla.rows[1];
-				var cell       = row.cells[3];
-				var precio     = parseFloat(cell.innerText);
-				row.cells[4].innerText = precio;
-				alert(precio);
+				if( typeof _.findWhere(getArticulosAVender(), {id: getArticulo().id } ) == 'undefined'  )
+				{
+					$.get('../articulos/'+ getArticulo().id + '.json', function(data)
+					{
+						getArticulosAVender().push(data);
 
-			}).error(function()
+						var tabla            = document.getElementById('articulos_a_vender').children[0];
+						var row              = tabla.insertRow( tabla.rows.length );
+						row.id               = "renglon_" +  (tabla.rows.length - 1);
+
+						//insertarCeldaTexto(row,texto,centrado)
+						insertarCeldaTexto(row,data.descripcion, false);
+						insertarCeldaTexto(row,data.modelo, true);
+
+						var input            = document.createElement('input');
+						input.type           = "text";
+						input.className      = 'input_text_rounded_corner';
+						input.style.width    = "100px";
+						input.value          = '1';
+						input.id             = 'cantidad_' + (tabla.rows.length  - 1);
+
+						cell                 = row.insertCell();
+						cell.style.textAlign = "center";
+						cell.appendChild(input);
+
+						insertarCeldaTexto(row,data.precio, true);
+						// cell                 = row.insertCell();
+						// cell.style.textAlign = "center";
+						//cell.innerText       = data.precio;
+
+						cell                 = row.insertCell();
+						cell.style.textAlign = "center";
+						cell.innerText       = data.precio;
+
+						var img          = document.createElement('img');
+						img.src          = "../assets/delete.png";
+						img.alt          = "delete";
+						img.width        = "16";
+						img.height       = "16";
+						img.style.cursor = "pointer";
+						img.id           = "img_" + getArticulo().id;
+						img.onclick      = function()
+						{
+							removeRow(this);
+						}
+
+						cell = row.insertCell();
+						cell.appendChild(img);
+
+						$('#descripcion').val('');
+						$('#descripcion').focus();
+
+					},'json').error(function()
+					{
+						alert('error');
+					});
+				}
+				else
+				{
+					alert('Ese articulo ya esta en la lista');
+				}
+			}
+			else
 			{
-				alert('error');
-			});
+				$.get('<%= preventa_path %>?id_articulo='+getArticulo().id, function(data)
+				{
+					$('#articulos_a_vender').html(data);
+					//insertamos el articulo a vender en un arreglo, para validar si se repite o no
+					getArticulosAVender().push(getArticulo());
+					$('#descripcion').val('');
+					$('#descripcion').focus();
+
+				}).error( function()
+				{
+					alert('error');
+				});
+			}
 		}
 		else
 			alert('No ha seleccionado un articulo en existencia');
+	}
+	function removeRow(img)
+	{
+		$( img.parentElement.parentElement).remove();
+		window.img = img;
+		alert(img.parentElement.parentElement.id);
+		//devuelve el numero que contiene el id de la imagen
+		//ejemplo: "img_5". regresaria el 5
+		var id = parseInt( img.id.split('_')[1] );
+		//solo contenra un elemento, es para meterlo al _.without
+		var arregloAux = _.where(getArticulosAVender(), {id: id });
+		console.log(arregloAux);
+		var x = _.without(getArticulosAVender(), arregloAux[0]);
+		console.log(x);
 	}
 	function hayArticulos()
 	{
 		//regresa true cuando se han agregado articulos para vender
 		//caso contrario retorna false
-		return !!$('#articulos_a_vender').html();
+		return !!$('#articulos_a_vender').text();
+	}
+	function insertarCeldaTexto(row, texto, centrado)
+	{
+		cell  = row.insertCell();
+		if( centrado )
+			cell.style.textAlign = "center";
+		cell.innerText  = texto;
 	}
 	var clientes = new Array();
 	function getClientes()
@@ -226,5 +302,14 @@
 	function getArticulo()
 	{
 		return articulo;
+	}
+	var articulosAVender = new Array();
+	function getArticulosAVender()
+	{
+		return articulosAVender;
+	}
+	function setArticulosAVender(articulosAVender)
+	{
+		this.articulosAVender = articulosAVender;
 	}
 </script>

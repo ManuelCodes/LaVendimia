@@ -24,8 +24,15 @@ class VentasController < ApplicationController
 
 	# get 
 	def preventa
-		@articulo = Articulo.find( params[:id_articulo] );
+		@articulo     = Articulo.find( params[:id_articulo] )
+		configuracion = Configuracion.find(1)
+		@articulo.precio = @articulo.precio * calcular_configuracion
 		render :layout => false
+		#respond_to do |format|
+		#	puts "#{format}"
+		#	format.html { render :layout => false }
+		#	format.json { render :json => @articulo }
+	    #end
 		#redirect_to :controller => 'articulos', :action => 'show', :id => 1
 	end
 
