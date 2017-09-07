@@ -15,12 +15,12 @@
         <%= @articulo.modelo %>
       </td>
       <td style="text-align:center">
-        <%= text_field_tag "cantidad_1", nil, class: 'input_text_rounded_corner', style:  "width:100px", value: "1" %>
+        <%= text_field_tag "cantidad_#{@articulo.id}", nil, class: 'input_text_rounded_corner', style:  "width:100px", value: "1", onblur: 'calcularImporte(this)', maxLength: 2 %>
       </td>
-      <td style="text-align:center">
+      <td  id="precio_<%= @articulo.id %>"style="text-align:center">
         <%= @articulo.precio %>
       </td>
-      <td id="importe_#{@articulo.id}" style="text-align:center">
+      <td id="importe_<%= @articulo.id %>" style="text-align:center">
         <%= @articulo.precio %>
       </td>
       <td>

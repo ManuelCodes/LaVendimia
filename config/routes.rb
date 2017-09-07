@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   match 'ventas/preventa' => 'ventas#preventa', as: 'preventa' , via: [:get] 
   get 'ventas/articulo', to: 'ventas#articulo_precio_calculado';
 
-  post 'ventas',    to: 'ventas#create'
+  post 'ventas', to: 'ventas#create'
   #get '/configuracions/:id/edit', to: 'configuracion#edit', as: :configuracion
   #post '/configuracions/:id', to: 'configuracion#create', as: :configuracions
   #patch '/configuracions/:id', to: 'configuracion#create'

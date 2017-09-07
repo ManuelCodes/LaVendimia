@@ -172,6 +172,11 @@
 				{
 					$.get('articulo?id_articulo='+getArticulo().id, function(data)
 					{
+						if( getArticulo().existencia < 1 )
+						{
+							alert('Se agoto la existencia de este articulo');
+							return;
+						}
 						getArticulosAVender().push(data);
 
 						var tabla            = document.getElementById('articulos_a_vender').children[0];
@@ -188,15 +193,17 @@
 						input.style.width    = "100px";
 						input.value          = '1';
 						input.id             = 'cantidad_' + getArticulo().id;
+						input.maxLength      = 2;
+						input.onblur         = function()
+						{
+							calcularImporte(this);
+						};
 
 						cell                 = row.insertCell();
 						cell.style.textAlign = "center";
 						cell.appendChild(input);
 
-						//calculando precio
-						var denominador = 
-
-						insertarCeldaTexto(row,data.precio, true, '');
+						insertarCeldaTexto(row,data.precio, true, 'precio_' + getArticulo().id);
 						insertarCeldaTexto(row,data.precio, true, 'importe_'+ getArticulo().id);
 
 						var img          = document.createElement('img');
@@ -209,7 +216,7 @@
 						img.onclick      = function()
 						{
 							removeRow(this);
-						}
+						};
 
 						cell = row.insertCell();
 						cell.appendChild(img);
@@ -249,16 +256,12 @@
 	function removeRow(img)
 	{
 		$( img.parentElement.parentElement).remove();
-		window.img = img;
-		alert(img.parentElement.parentElement.id);
 		//devuelve el numero que contiene el id de la imagen
 		//ejemplo: "img_5". regresaria el 5
 		var id = parseInt( img.id.split('_')[1] );
 		//solo contenra un elemento, es para meterlo al _.without
 		var arregloAux = _.where(getArticulosAVender(), {id: id });
-		console.log(arregloAux);
-		var x = _.without(getArticulosAVender(), arregloAux[0]);
-		console.log(x);
+		var x          = _.without(getArticulosAVender(), arregloAux[0]);
 	}
 	function hayArticulos()
 	{
@@ -272,7 +275,32 @@
 		if( centrado )
 			cell.style.textAlign = "center";
 		cell.innerText  = texto;
-		cell.id = id;
+		cell.id         = id;
+	}
+	function calcularImporte(input)
+	{
+		console.log(input.id);
+		//id en la base de datos
+		var id = input.id.split('_')[1];
+		id     = parseInt(id);
+		console.log(id);
+		//siempre retornara arreglo de uno
+		var articulo = _.where(getArticulosAVender(), {id: id })[0];
+
+		if( articulo.existencia <  parseInt( input.value) )
+		{
+			alert('La existencia no es suficiente');
+			input.parentElement.style.backgroundColor = "#ff0000";
+			return;
+		}
+		input.parentElement.style.backgroundColor = "";
+		var precio  = parseInt ( $('#precio_'+id).text() );
+		var importe = precio * parseInt( $('#cantidad_' + id).val() );
+		var residuo = importe % 1;
+		if( residuo === 0 )
+			importe += '.0'
+		$('#importe_' + id).text( importe );
+
 	}
 	var clientes = new Array();
 	function getClientes()
