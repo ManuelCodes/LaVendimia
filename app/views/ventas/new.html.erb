@@ -170,7 +170,7 @@
 			{
 				if( typeof _.findWhere(getArticulosAVender(), {id: getArticulo().id } ) == 'undefined'  )
 				{
-					$.get('../articulos/'+ getArticulo().id + '.json', function(data)
+					$.get('articulo?id_articulo='+getArticulo().id, function(data)
 					{
 						getArticulosAVender().push(data);
 
@@ -179,28 +179,25 @@
 						row.id               = "renglon_" +  (tabla.rows.length - 1);
 
 						//insertarCeldaTexto(row,texto,centrado)
-						insertarCeldaTexto(row,data.descripcion, false);
-						insertarCeldaTexto(row,data.modelo, true);
+						insertarCeldaTexto(row,data.descripcion, false, '');
+						insertarCeldaTexto(row,data.modelo,      true,  '');
 
 						var input            = document.createElement('input');
 						input.type           = "text";
 						input.className      = 'input_text_rounded_corner';
 						input.style.width    = "100px";
 						input.value          = '1';
-						input.id             = 'cantidad_' + (tabla.rows.length  - 1);
+						input.id             = 'cantidad_' + getArticulo().id;
 
 						cell                 = row.insertCell();
 						cell.style.textAlign = "center";
 						cell.appendChild(input);
 
-						insertarCeldaTexto(row,data.precio, true);
-						// cell                 = row.insertCell();
-						// cell.style.textAlign = "center";
-						//cell.innerText       = data.precio;
+						//calculando precio
+						var denominador = 
 
-						cell                 = row.insertCell();
-						cell.style.textAlign = "center";
-						cell.innerText       = data.precio;
+						insertarCeldaTexto(row,data.precio, true, '');
+						insertarCeldaTexto(row,data.precio, true, 'importe_'+ getArticulo().id);
 
 						var img          = document.createElement('img');
 						img.src          = "../assets/delete.png";
@@ -269,12 +266,13 @@
 		//caso contrario retorna false
 		return !!$('#articulos_a_vender').text();
 	}
-	function insertarCeldaTexto(row, texto, centrado)
+	function insertarCeldaTexto(row, texto, centrado, id)
 	{
 		cell  = row.insertCell();
 		if( centrado )
 			cell.style.textAlign = "center";
 		cell.innerText  = texto;
+		cell.id = id;
 	}
 	var clientes = new Array();
 	function getClientes()

@@ -22,10 +22,20 @@ class VentasController < ApplicationController
 	def update
 	end
 
+	def articulo_precio_calculado
+		@articulo        = Articulo.find( params[:id_articulo] )
+		configuracion    = Configuracion.find(1)
+		@articulo.precio = @articulo.precio * calcular_configuracion
+
+		respond_to do |format|
+			format.json {render :json => @articulo}
+		end
+	end
+
 	# get 
 	def preventa
-		@articulo     = Articulo.find( params[:id_articulo] )
-		configuracion = Configuracion.find(1)
+		@articulo        = Articulo.find( params[:id_articulo] )
+		configuracion    = Configuracion.find(1)
 		@articulo.precio = @articulo.precio * calcular_configuracion
 		render :layout => false
 		#respond_to do |format|
@@ -35,5 +45,4 @@ class VentasController < ApplicationController
 	    #end
 		#redirect_to :controller => 'articulos', :action => 'show', :id => 1
 	end
-
 end
