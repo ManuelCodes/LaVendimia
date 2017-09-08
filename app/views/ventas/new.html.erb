@@ -53,13 +53,25 @@
 	    <div>
 	    	<table  align="right">
 	    		<tr>
-	    			<td>
+	    			<td style="text-align:right">
 	    				<h3>
 	    					<span class="label label-default">Enganche: </span>
 	    				</h3>
 	    			</td>
-	    			<td >
+	    			<td style="text-align:right;padding-left:40px">
 	    				<h3 id="engancheTotal">
+	    					0.0
+	    				</h3>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td style="text-align:right">
+	    				<h3>
+	    					<span class="label label-default">Bonificación enganche: </span>
+	    				</h3>
+	    			</td>
+	    			<td  style="text-align:right;padding-left:40px">
+	    				<h3 id="bonificacion">
 	    					0.0
 	    				</h3>
 	    			</td>
@@ -148,6 +160,13 @@
 	   			}
 	      	}
 	   	});
+		$.get('../configuracions/1.json',function(data)
+		{
+			setConfiguracion(data);
+		},'json').error(function()
+		{
+			alert('error');
+		});
 	});
 	function clave_cliente(id)
 	{
@@ -284,6 +303,8 @@
 		//solo contenra un elemento, es para meterlo al _.without
 		var arregloAux = _.where(getArticulosAVender(), {id: id });
 		var x          = _.without(getArticulosAVender(), arregloAux[0]);
+		setArticulosAVender(x);
+		console.log(x);
 		calcularEngancheTotal();
 	}
 	function hayArticulos()
@@ -353,11 +374,29 @@
 		var total = 0;
 		$('[id^="enganche_"]').each(function()
 		{
-			console.log(this);
 			total += parseFloat(this.innerText);
 		});
 		total = total.toFixed(2);
 		$('#engancheTotal').text(total);
+		calcularBonificacionEnganche();
+	}
+	function calcularBonificacionEnganche()
+	{
+		var bonificacion = getConfiguracion().tasa * getConfiguracion().plazo_maximo;
+		bonificacion    /= 100;
+		bonificacion    *= parseFloat( $('#engancheTotal').text() );
+		var residuo      = bonificacion % 1;
+		if(  residuo === 0)
+		{
+			bonificacion += '.0';
+		}
+		else
+		{
+			bonificacion = bonificacion.toFixed(2);
+			if( isLastCharacterZero(bonificacion.toString()) )
+				bonificacion = bonificacion.toString().slice(0, -1);
+		}
+		$('#bonificacion').text(bonificacion);
 	}
 	function isLastCharacterZero(text)
 	{
@@ -398,5 +437,14 @@
 	function setArticulosAVender(articulosAVender)
 	{
 		this.articulosAVender = articulosAVender;
+	}
+	var configuracion;
+	function setConfiguracion(configuracion)
+	{
+		this.configuracion = configuracion;
+	}
+	function getConfiguracion()
+	{
+		return configuracion;
 	}
 </script>
