@@ -1,4 +1,5 @@
 class ArticulosController < ApplicationController
+  include VentasHelper
   before_action :set_articulo, only: [:show, :edit, :update, :destroy]
   helper_method :clave_format
   # GET /articulos
@@ -7,7 +8,15 @@ class ArticulosController < ApplicationController
     @articulos = Articulo.all
     @articulos = Articulo.paginate(:page => params[:page])
     if params[:term].present?
-      @articulos = @articulos.where("descripcion LIKE ? ", "%#{params[:term]}%")
+      @articulos    = @articulos.where("descripcion LIKE ? ", "%#{params[:term]}%")
+      configuracion = Configuracion.find(1);
+      articulosAux  = []
+      @articulos.each do |articulo|
+        articuloAux = agregarAtributosConfiguracion articulo, configuracion
+        articulosAux.push(articuloAux)
+      end
+      @articulos = articulosAux
+      #m
     else
       @articulos = @articulos.paginate(page: params[:page])
     end

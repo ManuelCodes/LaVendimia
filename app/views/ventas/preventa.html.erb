@@ -5,6 +5,7 @@
       <th style="text-align:center">Cantidad</th>
       <th style="text-align:center">Precio</th>
       <th style="text-align:center">Importe</th>
+      <th>Enganche</th>
       <th></th>
     </tr>
   	<tr id="renglon_1">
@@ -23,8 +24,12 @@
       <td id="importe_<%= @articulo.id %>" style="text-align:center">
         <%= @articulo.precio %>
       </td>
+      <td id = "enganche_<%= @articulo.id %>">
+        <%= @articulo.enganche %>
+      </td>
       <td>
         <%=image_tag("delete.png",  alt: "delete", width: "16", height: "16", style: "cursor:pointer", onclick: "removeRow(this)", id: "img_#{@articulo.id}" )%>
       </td>
   	</tr>
 </table>
+<hr class = "blueline">

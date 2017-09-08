@@ -48,7 +48,24 @@
 	    		</td>
 	    	</tr>
 	    </table>
+	    <hr class = "blueline">
 	    <div class = "table-responsive" align = "left" id = "articulos_a_vender"></div>
+	    <div>
+	    	<table  align="right">
+	    		<tr>
+	    			<td>
+	    				<h3>
+	    					<span class="label label-default">Enganche: </span>
+	    				</h3>
+	    			</td>
+	    			<td >
+	    				<h3 id="engancheTotal">
+	    					0.0
+	    				</h3>
+	    			</td>
+	    		</tr>
+	    	</table>
+	    </div>
 	</div>
 	<% if false %>
 		<%= button_tag  "Cancelar", :type => 'submit' %>
@@ -172,6 +189,7 @@
 				{
 					$.get('articulo?id_articulo='+getArticulo().id, function(data)
 					{
+						alert(data.enganche);
 						if( getArticulo().existencia < 1 )
 						{
 							alert('Se agoto la existencia de este articulo');
@@ -203,8 +221,9 @@
 						cell.style.textAlign = "center";
 						cell.appendChild(input);
 
-						insertarCeldaTexto(row,data.precio, true, 'precio_' + getArticulo().id);
-						insertarCeldaTexto(row,data.precio, true, 'importe_'+ getArticulo().id);
+						insertarCeldaTexto(row,data.precio,   true, 'precio_' + getArticulo().id  );
+						insertarCeldaTexto(row,data.precio,   true, 'importe_'+ getArticulo().id  );
+						insertarCeldaTexto(row,data.enganche, false, 'enganche_'+ getArticulo().id );
 
 						var img          = document.createElement('img');
 						img.src          = "../assets/delete.png";
@@ -220,6 +239,8 @@
 
 						cell = row.insertCell();
 						cell.appendChild(img);
+
+						calcularEngancheTotal();
 
 						$('#descripcion').val('');
 						$('#descripcion').focus();
@@ -241,6 +262,7 @@
 					$('#articulos_a_vender').html(data);
 					//insertamos el articulo a vender en un arreglo, para validar si se repite o no
 					getArticulosAVender().push(getArticulo());
+					calcularEngancheTotal();
 					$('#descripcion').val('');
 					$('#descripcion').focus();
 
@@ -262,6 +284,7 @@
 		//solo contenra un elemento, es para meterlo al _.without
 		var arregloAux = _.where(getArticulosAVender(), {id: id });
 		var x          = _.without(getArticulosAVender(), arregloAux[0]);
+		calcularEngancheTotal();
 	}
 	function hayArticulos()
 	{
@@ -298,9 +321,47 @@
 		var importe = precio * parseInt( $('#cantidad_' + id).val() );
 		var residuo = importe % 1;
 		if( residuo === 0 )
-			importe += '.0'
+		{
+			importe += '.0';
+		}
+		else
+		{
+			importe = importe.toFixed(2);
+			if( isLastCharacterZero(importe.toString()) )
+				importe = importe.toString().slice(0, -1);
+		}
 		$('#importe_' + id).text( importe );
 
+		//var enganche = articulo.prc_enganche / 100;
+		var enganche = importe * articulo.prc_enganche;
+		residuo      = enganche % 1;
+		if( residuo === 0)
+		{
+			enganche += '.0';
+		}
+		else
+		{
+			enganche = enganche.toFixed(2);
+			if( isLastCharacterZero(enganche.toString()) )
+				enganche = enganche.toString().slice(0, -1);
+		}
+		$('#enganche_' + id).text(enganche);
+		calcularEngancheTotal();
+	}
+	function calcularEngancheTotal()
+	{
+		var total = 0;
+		$('[id^="enganche_"]').each(function()
+		{
+			console.log(this);
+			total += parseFloat(this.innerText);
+		});
+		total = total.toFixed(2);
+		$('#engancheTotal').text(total);
+	}
+	function isLastCharacterZero(text)
+	{
+		return (text.charAt(text.length-1) == 0);
 	}
 	var clientes = new Array();
 	function getClientes()
