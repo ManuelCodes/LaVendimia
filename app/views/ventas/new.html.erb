@@ -76,6 +76,18 @@
 	    				</h3>
 	    			</td>
 	    		</tr>
+	    		<tr>
+	    			<td style="text-align:right">
+	    				<h3>
+	    					<span class="label label-default">Total: </span>
+	    				</h3>
+	    			</td>
+	    			<td  style="text-align:right;padding-left:40px">
+	    				<h3 id="total">
+	    					0.0
+	    				</h3>
+	    			</td>
+	    		</tr>
 	    	</table>
 	    </div>
 	</div>
@@ -208,7 +220,6 @@
 				{
 					$.get('articulo?id_articulo='+getArticulo().id, function(data)
 					{
-						alert(data.enganche);
 						if( getArticulo().existencia < 1 )
 						{
 							alert('Se agoto la existencia de este articulo');
@@ -397,6 +408,17 @@
 				bonificacion = bonificacion.toString().slice(0, -1);
 		}
 		$('#bonificacion').text(bonificacion);
+		calcularTotal();
+	}
+	function calcularTotal()
+	{
+		var importeTotal = 0;
+		$('[id^="importe_"]').each(function()
+		{
+			importeTotal += parseFloat(this.innerText);
+		});
+		var total = importeTotal - parseFloat( $('#engancheTotal').text() ) - parseFloat( $('#bonificacion').text() );
+		$('#total').text(total);
 	}
 	function isLastCharacterZero(text)
 	{
