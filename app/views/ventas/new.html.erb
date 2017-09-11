@@ -8,6 +8,24 @@
 	    margin: 1em 0;
 	    padding: 0; 
 	}
+	.bordeadoFondo
+	{
+		/*
+		*/
+	}
+	td.bordeadoFondo
+	{
+		border-top: thin solid; 
+	    border-bottom: thin solid;
+	}
+
+	td:first-child.bordeadoFondo {
+	    border-left: thin solid;
+	}
+
+	td:last-child.bordeadoFondo {
+	    border-right: thin solid;
+	}
 </style>
 <%= form_tag({controller: "ventas", action: "create"}, method: "post") do %>
 	<div class="panel panel-primary" style="max-width:80%;margin-left:auto; margin-right:auto;">
@@ -49,9 +67,9 @@
 	    	</tr>
 	    </table>
 	    <hr class = "blueline">
-	    <div class = "table-responsive" align = "left" id = "articulos_a_vender"></div>
-	    <div>
-	    	<table  align="right">
+	    <div align = "left" id = "articulos_a_vender"></div>
+	    <div align="right">
+	    	<table style="border:0">
 	    		<tr>
 	    			<td style="text-align:right">
 	    				<h3>
@@ -89,11 +107,26 @@
 	    			</td>
 	    		</tr>
 	    	</table>
-	    </div>
+    	</div>
+    	<div id = "div_abonos" style="width:100%;display:none">
+	    	<table  cellspacing="0" style="width:100%;" id="tabla_abonos" class = "table table-bordered" >
+				<tr>
+					<td colspan="5" style="background-color:#8080ff;text-align:center">
+						<span style="color:#000066;font-weight:bold;">ABONOS MENSUALES</span>
+					</td>
+				</tr>
+			</table>
+    	</div>
+    	<table align="right">
+    		<tr>
+    			<td colspan="2" style="text-align:right">
+    				<%= button_tag  "Cancelar",  :type => 'button', :class => "btn btn-success",  :onclick => "history.back();" %>
+					<%= button_tag  "Siguiente", :type => 'button', :class => "btn btn-success" , :onclick => "siguiente()", :id => "boton_siguiente" %>
+					<%= button_tag  "Guardar",   :type => 'button', :class => "btn btn-success" , :onclick => "guardar()",   :id => "boton_guardar",  :style => "display:none" %>
+    			</td>
+    		</tr>
+    	</table>
 	</div>
-	<% if false %>
-		<%= button_tag  "Cancelar", :type => 'submit' %>
-	<%end %>
 <%end %>
 <script type="text/javascript">
 	$(function()
@@ -172,6 +205,15 @@
 	   			}
 	      	}
 	   	});
+		//en caso de que el usuario oprima el backspace o el supr,
+		//el sistema borrar el label del RFC y el usuario tendra que
+		//volver a seleccionar el cliente
+		document.getElementById('nom_cliente').onkeydown = function(e)
+		{
+		    var key = event.keyCode || event.charCode;
+		    if( key == 8 || key == 46 )
+		    	$('#label_RFC').text('');
+		};
 		$.get('../configuracions/1.json',function(data)
 		{
 			setConfiguracion(data);
@@ -315,7 +357,6 @@
 		var arregloAux = _.where(getArticulosAVender(), {id: id });
 		var x          = _.without(getArticulosAVender(), arregloAux[0]);
 		setArticulosAVender(x);
-		console.log(x);
 		calcularEngancheTotal();
 	}
 	function hayArticulos()
@@ -419,6 +460,83 @@
 		});
 		var total = importeTotal - parseFloat( $('#engancheTotal').text() ) - parseFloat( $('#bonificacion').text() );
 		$('#total').text(total);
+	}
+	function siguiente()
+	{
+		var salir = false;
+		if ( !$('#label_RFC').text() )
+		{
+			alert('Los datos verificados no son correctos, favor de verificar');
+			return;
+		}
+		if( !hayArticulos() )
+		{
+			alert('Los datos verificados no son correctos, favor de verificar');
+			return;
+		}
+		$('[id^="cantidad_"]').each(function()
+		{
+			if(this.parentElement.style.backgroundColor != "")
+			{
+				salir = true;
+				return false;
+			}
+			//!document.getElementById('cantidad_6').parentElement.style.backgroundColor
+		});
+		if(salir)
+		{
+			alert('Los datos verificados no son correctos, favor de verificar');
+			return;
+		}
+		//dibujamos la tabla de abonos
+		var residuo  = getConfiguracion().plazo_maximo % 3;
+		var producto = parseInt( getConfiguracion().plazo_maximo / 3 );
+		$('#div_abonos').show();
+		var tabla = document.getElementById('tabla_abonos');
+		var contadorAbonos = 3;
+		var precioContado = calcularPrecioContado();
+		var row,cell,totalAdeudo,totalAPagar,importeAbono,seAhorra;
+		for(var i = 0; i < producto; i++ )
+		{
+			row = tabla.insertRow();
+			insertarCeldaTexto(row, contadorAbonos + " ABONOS DE", false, 'abonos_de_'+ contadorAbonos);
+			totalAPagar = calcularTotalAPagar(contadorAbonos, parseFloat(precioContado) );
+			importeAbono = totalAPagar/contadorAbonos;
+			insertarCeldaTexto(row, "$"+importeAbono.toFixed(2), false, 'importe_abonos_de_'+ contadorAbonos);
+			insertarCeldaTexto(row, "TOTAL A PAGAR $"+ totalAPagar, false, 'total_a_pagar_'+ contadorAbonos);
+			seAhorra = parseFloat(  $('#total').text() ) - totalAPagar;
+			insertarCeldaTexto(row, "SE AHORRA $"+ seAhorra.toFixed(2), false, 'se_ahorra_'+ contadorAbonos);
+			//dibujamos el radioButton
+			var input   = document.createElement('input');
+			input.type  = "radio";
+			input.name  = "plazo_abonos";
+			input.id    = "plazo_abonos_" + contadorAbonos;
+			input.value = contadorAbonos;
+			row.insertCell().appendChild(input);
+
+			contadorAbonos += 3;
+		}
+		contadorAbonos -= 3;
+		for(var i = 0; i<residuo; i++)
+		{
+			//
+		}
+	}
+	function calcularTotalAPagar(plazo_meses, contado)
+	{
+		var total = getConfiguracion().tasa * plazo_meses;
+		total    /= 100;
+		total    += 1;
+		total     = parseFloat(  contado ) * total;
+		return total.toFixed(2);
+	}
+	function calcularPrecioContado()
+	{
+		var precionContado = getConfiguracion().tasa * getConfiguracion().plazo_maximo;
+		precionContado    /= 100;
+		precionContado    += 1;
+		precionContado     = parseFloat(  $('#total').text() ) / precionContado ;
+		return precionContado.toFixed(2);
 	}
 	function isLastCharacterZero(text)
 	{
