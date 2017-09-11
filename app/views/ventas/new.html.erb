@@ -31,7 +31,7 @@
 	<div class="panel panel-primary" style="max-width:80%;margin-left:auto; margin-right:auto;">
 		<div class="panel-heading">Registro de Clientes</div>
 		<div align = "right" class = "text-success" style="font-weight:bold;padding-right:10%">
-			Clave: <%= @clave %>
+			Folio venta: <%= @clave %>
 	    </div>
 	    <table>
 	    	<tr>
@@ -51,15 +51,15 @@
 	    	</tr>
 	    </table>
 	    <hr class = "blueline">
-	    <table>
+	    <table id = "tabla_buscar_articulo">
 	    	<tr>
 	    		<td >
 	    			<div style="font-size: 19px">
-				    	<span class="label label-primary">Descripción</span>
+				    	<span class="label label-primary">Articulo</span>
 				    </div>
 	    		</td>
 	    		<td>
-	    			<%= text_field "descripcion", nil,  :class => 'form-control', :style => "width:200px", :placeholder => "Buscar descripción", :id => "descripcion" %>
+	    			<%= text_field "Articulo", nil,  :class => 'form-control', :style => "width:200px", :placeholder => "Buscar articulo", :id => "descripcion" %>
 	    		</td>
 	    		<td id = "celdaVenta">
         			<span class="glyphicon glyphicon-plus-sign" style = "font-size:24px;cursor:pointer" onclick = "mostrarDatosArticulo()"></span>
@@ -349,6 +349,8 @@
 	}
 	function removeRow(img)
 	{
+		if( $('#boton_guardar').is(':visible') )
+			return;
 		$( img.parentElement.parentElement).remove();
 		//devuelve el numero que contiene el id de la imagen
 		//ejemplo: "img_5". regresaria el 5
@@ -500,12 +502,15 @@
 		{
 			row = tabla.insertRow();
 			insertarCeldaTexto(row, contadorAbonos + " ABONOS DE", false, 'abonos_de_'+ contadorAbonos);
-			totalAPagar = calcularTotalAPagar(contadorAbonos, parseFloat(precioContado) );
+			totalAPagar  = calcularTotalAPagar(contadorAbonos, parseFloat(precioContado) );
 			importeAbono = totalAPagar/contadorAbonos;
 			insertarCeldaTexto(row, "$"+importeAbono.toFixed(2), false, 'importe_abonos_de_'+ contadorAbonos);
 			insertarCeldaTexto(row, "TOTAL A PAGAR $"+ totalAPagar, false, 'total_a_pagar_'+ contadorAbonos);
 			seAhorra = parseFloat(  $('#total').text() ) - totalAPagar;
-			insertarCeldaTexto(row, "SE AHORRA $"+ seAhorra.toFixed(2), false, 'se_ahorra_'+ contadorAbonos);
+			seAhorra = seAhorra.toFixed(2);
+			if(seAhorra < 0)
+				seAhorra = "0.00";
+			insertarCeldaTexto(row, "SE AHORRA $"+ seAhorra, false, 'se_ahorra_'+ contadorAbonos);
 			//dibujamos el radioButton
 			var input   = document.createElement('input');
 			input.type  = "radio";
@@ -516,11 +521,41 @@
 
 			contadorAbonos += 3;
 		}
-		contadorAbonos -= 3;
+		//a partir de aqui dibujos los abonos que no son multiplos de 3
+		//y que pueden ser de menos de 3 meses a mas de 12, depende de la configuracion
+		if(contadorAbonos >= 3)
+			contadorAbonos -= 3;
 		for(var i = 0; i<residuo; i++)
 		{
-			//
+			row = tabla.insertRow();
+			contadorAbonos += 1;
+			insertarCeldaTexto(row, contadorAbonos + " ABONOS DE", false, 'abonos_de_'+ contadorAbonos);
+			totalAPagar  = calcularTotalAPagar(contadorAbonos, parseFloat(precioContado) );
+			importeAbono = totalAPagar/contadorAbonos;
+			insertarCeldaTexto(row, "$"+importeAbono.toFixed(2), false, 'importe_abonos_de_'+ contadorAbonos);
+			insertarCeldaTexto(row, "TOTAL A PAGAR $"+ totalAPagar, false, 'total_a_pagar_'+ contadorAbonos);
+			seAhorra = parseFloat(  $('#total').text() ) - totalAPagar;
+			insertarCeldaTexto(row, "SE AHORRA $"+ seAhorra.toFixed(2), false, 'se_ahorra_'+ contadorAbonos);
+			//dibujamos el radiobutton
+			var input   = document.createElement('input');
+			input.type  = "radio";
+			input.name  = "plazo_abonos";
+			input.id    = "plazo_abonos_" + contadorAbonos;
+			input.value = contadorAbonos;
+			row.insertCell().appendChild(input);
 		}
+		$('#tabla_buscar_articulo').hide();
+		$('#boton_siguiente').hide();
+		$('#boton_guardar').show();
+		$('[id^="cantidad_"]').each(function()
+		{
+			this.readOnly = true;
+			this.style.backgroundColor = "gray";
+		});
+		var nom_cliente = document.getElementById('nom_cliente');
+		nom_cliente.readOnly = true;
+		nom_cliente.style.backgroundColor = "gray";
+
 	}
 	function calcularTotalAPagar(plazo_meses, contado)
 	{
@@ -537,6 +572,63 @@
 		precionContado    += 1;
 		precionContado     = parseFloat(  $('#total').text() ) / precionContado ;
 		return precionContado.toFixed(2);
+	}
+	function guardar()
+	{
+		var selected = false;
+		var inputRadio;
+		$('[id^="plazo_abonos_"]').each(function()
+		{
+			if(this.checked)
+			{
+				inputRadio = this;
+				selected   = true;
+				return false;
+			}
+		});
+		if( !selected )
+		{
+			alert('Debe seleccionar un plazo para realizar el pago de su compra”');
+			return;
+		}
+		else
+		{
+			$('[id^="cantidad_"]').each(function()
+			{
+				var idArticulo = parseInt(this.id.split('_')[1]);
+				for(var i = 0; i< getArticulosAVender().length; i++)
+					if( idArticulo == getArticulosAVender()[i].id)
+						getArticulosAVender()[i].cantidad = this.value;
+			});
+			var cliente_id   = parseInt ( $('#nom_cliente').val().split('-')[0].trim() );
+			var enganche     = parseFloat( $('#engancheTotal').text() );
+			var total        = parseFloat( $('#total_a_pagar_'+inputRadio.value).text().split('$')[1]);
+			var bonificacion = parseFloat( $('#bonificacion').text()  );
+			var objJson    = {
+				articulosAVender: getArticulosAVender(),
+				cliente_id: cliente_id,
+				enganche: enganche,
+				total: total,
+				bonificacion: bonificacion,
+				plazo_meses: inputRadio.value
+			};
+			var objJson = JSON.stringify(objJson);
+			$.ajax(
+			{
+				url: '../ventas',
+				type: 'post',
+				data: objJson,
+				contentType:"application/json; charset=utf-8",
+				success: function()
+				{
+					alert('todo bien');
+				},
+				error: function()
+				{
+					alert('Hubo un error al guardar archivos');
+				}
+			});
+		}
 	}
 	function isLastCharacterZero(text)
 	{

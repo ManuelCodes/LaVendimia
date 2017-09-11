@@ -5,5 +5,4 @@ class Cliente < ApplicationRecord
 	validates_presence_of :ap_materno, :message => "No se puede continuar el apellido materno es requerido"
 	validates_presence_of :rfc, :message => "No se puede continuar el rfc es requerido"
 	validates :rfc, :format => { with: /\A([A-ZÑ\x26]{3,4}([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1]))((-)?([A-Z\d]{3}))?\z/, message: "No se puede continuar el formato del rfc es incorrecto"}
-	has_many :ventas
 end
