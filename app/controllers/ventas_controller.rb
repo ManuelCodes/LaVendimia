@@ -1,7 +1,19 @@
 class VentasController < ApplicationController
+	require 'date'
 	include VentasHelper
+	helper_method :clave_format
 	# GET /ventas
 	def index
+		sql =
+		"
+			SELECT
+				v.id as folio_venta, c.id as clave_cliente, c.nom_cliente, c.ap_paterno, c.ap_materno, v.total, v.created_at
+			FROM ventas v
+			INNER JOIN clientes c ON
+				v.cliente_id = c.id
+		"
+		@ventas = ActiveRecord::Base.connection.execute(sql);
+		#@ventas = Articulo.paginate(:page => params[:page])
 	end
 	# GET /ventas/1
 	def show

@@ -13,7 +13,7 @@
   <tbody>
     <% @articulos.each do |articulo| %>
       <tr>
-        <td><%= clave_format articulo.id %> </td>
+        <td><%= clave_format articulo.id %></td>
         <td><%= articulo.descripcion  %></td>
         <td><%= link_to 'Consultar', articulo %></td>
         <td><%= link_to 'Editar', edit_articulo_path(articulo) %></td>

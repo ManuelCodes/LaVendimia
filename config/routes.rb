@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   get 'ventas/articulo', to: 'ventas#articulo_precio_calculado';
 
   post 'ventas', to: 'ventas#create'
+  get  'ventas', to: 'ventas#index'
   #get '/configuracions/:id/edit', to: 'configuracion#edit', as: :configuracion
   #post '/configuracions/:id', to: 'configuracion#create', as: :configuracions
   #patch '/configuracions/:id', to: 'configuracion#create'
