@@ -24,7 +24,7 @@
 					<%= venta[2]%> <%= venta[3]%> <%= venta[4]%>
 				</td>
 				<td style="text-align:center">
-					<%= venta[5]%>
+					<%= sprintf("%.2f", venta[5])  %>
 				</td>
 				<td style="text-align:center">
 					<%= DateTime.parse(venta[6]).strftime("%d/%m/%Y") %>

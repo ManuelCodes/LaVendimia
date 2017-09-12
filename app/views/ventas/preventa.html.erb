@@ -19,13 +19,13 @@
         <%= text_field_tag "cantidad_#{@articulo.id}", nil, class: 'input_text_rounded_corner', style:  "width:100px", value: "1", onblur: 'calcularImporte(this)', maxLength: 2 %>
       </td>
       <td  id="precio_<%= @articulo.id %>"style="text-align:center">
-        <%= @articulo.precio %>
+        <%= sprintf("%.2f", @articulo.precio) %>
       </td>
       <td id="importe_<%= @articulo.id %>" style="text-align:center">
-        <%= @articulo.precio %>
+        <%= sprintf("%.2f", @articulo.precio)  %>
       </td>
       <td id = "enganche_<%= @articulo.id %>">
-        <%= @articulo.enganche %>
+        <%= sprintf("%.2f", @articulo.enganche)  %>
       </td>
       <td>
         <%=image_tag("delete.png",  alt: "delete", width: "16", height: "16", style: "cursor:pointer", onclick: "removeRow(this)", id: "img_#{@articulo.id}" )%>

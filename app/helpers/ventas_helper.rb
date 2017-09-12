@@ -23,6 +23,9 @@ module VentasHelper
 		parsed_json[:precio]       = articulo.precio * calcular_configuracion_precio(configuracion)
 		parsed_json[:prc_enganche] = calcular_configuracion_enganche( configuracion )
 		parsed_json[:enganche]     = parsed_json[:prc_enganche] * parsed_json[:precio]
+		#lo parceamos a bigdecimal
+		parsed_json[:precio]       = sprintf("%.2f", parsed_json[:precio])
+		parsed_json[:enganche]     = sprintf("%.2f", parsed_json[:enganche])
 		parsed_json
 	end
 end

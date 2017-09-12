@@ -77,6 +77,10 @@ class VentasController < ApplicationController
 		@articulo.precio       = @articulo.precio * calcular_configuracion_precio(configuracion)
 		@articulo.prc_enganche = calcular_configuracion_enganche( configuracion )
 		@articulo.enganche     = @articulo.prc_enganche * @articulo.precio;
+		#le damos formato a los deciamales
+		#@articulo.precio       = "%.2f" % @articulo.precio.to_d
+		#@articulo.prc_enganche = "%.2f" % @articulo.prc_enganche.to_d
+		#@articulo.enganche     = "%.2f" % @articulo.enganche.to_d
 		render :layout => false
 		#respond_to do |format|
 		#	puts "#{format}"
