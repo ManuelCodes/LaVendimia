@@ -30,38 +30,33 @@
     <nav class="navbar navbar-inverse">
       <div class="container-fluid">
         <ul class="nav navbar-nav">
-          <% if user_signed_in? %>
-            <li class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" href="#">Inicio<span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li>
-                  <%= link_to "Ventas", ventas_path %>
-                </li>
-                <li class="divider"></li>
-                <li>
-                  <%= link_to "Clientes", clientes_path %>
-                </li>
-                <li>
-                  <%= link_to "Articulos", articulos_path %>
-                </li>
-                <li>
-                    <% if isConfigurated? %>
-                      <%= link_to "Configuración", '/configuracions/1/edit' %>
-                    <% else %>
-                      <%= link_to "Configuración", new_configuracion_path %>
-                    <% end %>
-                </li>
-              </ul>
-            </li>
-          <% end %>
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Inicio<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li>
+                <%= link_to "Ventas", ventas_path %>
+              </li>
+              <li class="divider"></li>
+              <li>
+                <%= link_to "Clientes", clientes_path %>
+              </li>
+              <li>
+                <%= link_to "Articulos", articulos_path %>
+              </li>
+              <li>
+                  <% if isConfigurated? %>
+                    <%= link_to "Configuración", '/configuracions/1/edit' %>
+                  <% else %>
+                    <%= link_to "Configuración", new_configuracion_path %>
+                  <% end %>
+              </li>
+            </ul>
+          </li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
-          <% if user_signed_in? %>
-            <li><a href="#"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
             <li id = "date">
               <a href="#"> <%=  Time.now.strftime("%d/%m/%Y")   %></a>
             </li>
-          <% end %>
         </ul>
       </div>
     </nav>

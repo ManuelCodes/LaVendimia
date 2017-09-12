@@ -34,5 +34,5 @@ Rails.application.routes.draw do
 devise_for :users
 #root to:  '/users/sign_in', to: 'devise/sessions#new'
 #root :to => "devise/sessions#new"
-root :to => redirect("/users/sign_in")
+root :to => redirect("/main_page/index")
 end

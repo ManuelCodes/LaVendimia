@@ -5,9 +5,10 @@ module VentasHelper
 
 	def calcular_configuracion_precio configuracion
 		#configuracion = Configuracion.find(1)
-		numerador     = (1  + ( configuracion.tasa *  configuracion.plazo_maximo ) )
-		denominador   = 100
-		resultado     = numerador / denominador
+		numerador   = ( configuracion.tasa *  configuracion.plazo_maximo ) 
+		denominador = 100
+		resultado   = numerador / denominador
+		resultado  +=1
 		resultado
 	end
 
