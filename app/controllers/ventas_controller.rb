@@ -31,7 +31,6 @@ class VentasController < ApplicationController
 	def create
 		#todo here
 		var = params[:articulosAVender]
-		puts "#{var[0][:id]}"
 		venta = Venta.new
 		venta_id = clave_format(Venta.maximum(:id).to_i.next);
 		ActiveRecord::Base.transaction do
@@ -49,13 +48,14 @@ class VentasController < ApplicationController
 				rva.articulo_id = articulo[:id]
 				
 				rva.cantidad    = articulo[:cantidad]
-				puts "666666666666666666666666666666666666666#{venta_id}"
 				rva.save!
 				a = Articulo.find(articulo[:id])
 				a.existencia = a.existencia.to_i - articulo[:cantidad].to_i;
 				a.save!
 			end
 		end
+		flash[:notice] = 'Bien hecho! Tu venta ha sido registrada correctamente'
+		redirect_to ventas_path
 	end
 	# PATCH/PUT /ventas/1
 	def update
